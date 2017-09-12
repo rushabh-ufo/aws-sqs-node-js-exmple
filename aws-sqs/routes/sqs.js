@@ -2,11 +2,10 @@ var express = require('express');
 var router = express.Router();
 var aws = require('aws-sdk');
 var fs = require('fs');
-var queueURL = null;
-var receipt = "";
 aws.config.loadFromPath(__dirname + '/aws-config.json');
 var sqs = new aws.SQS();
 
+//creating queue
 router.get('/createQueue', function (req, res) {
     var queueNameQuery = {
         QueueName: req.query.queueName + '.fifo'
@@ -48,6 +47,7 @@ router.get('/createQueue', function (req, res) {
 
 });
 
+//posting message to queue
 router.get('/postMessage', function (req, res) {
     fs.readFile(__dirname + '/urlData.txt', { encoding: 'utf-8' }, function (err, data) {
         if (!err) {
@@ -74,6 +74,7 @@ router.get('/postMessage', function (req, res) {
 
 });
 
+//receiving message from queue
 router.get('/receive', function (req, res) {
     fs.readFile(__dirname + '/urlData.txt', { encoding: 'utf-8' }, function (err, data) {
         if (!err) {
@@ -104,7 +105,7 @@ router.get('/receive', function (req, res) {
 
 });
 
-// Deleting a message.
+// Deleting a message from queue
 router.get('/delete', function (req, res) {
     var queueUrl = '';
     var receiptHandle = '';
